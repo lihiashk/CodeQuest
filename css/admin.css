@@ -1,0 +1,309 @@
+/**
+ * admin.css — Dark theme dashboard styling for CodeQuest admin panel
+ */
+
+/* ── Reset & Base ── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0a0e1a;
+    --surface: #121828;
+    --surface2: #1a2236;
+    --border: rgba(255, 255, 255, .08);
+    --text: #e0e8f0;
+    --text-dim: rgba(255, 255, 255, .45);
+    --accent: #4ecb71;
+    --accent2: #4d96ff;
+    --gold: #ffd93d;
+    --red: #ff6b6b;
+    --purple: #b87dff;
+    --radius: 14px;
+}
+
+body {
+    font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+    padding: 0;
+}
+
+/* ── Header ── */
+.dash-header {
+    background: linear-gradient(135deg, #0f1629 0%, #1a2a4e 100%);
+    padding: 28px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dash-title {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--gold), #ffaa33);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dash-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.dash-refresh {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background .2s;
+}
+
+.dash-refresh:hover {
+    background: var(--accent2);
+    color: #fff;
+}
+
+/* ── Cards Grid ── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 24px 32px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+
+.stat-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1.2;
+}
+
+.stat-value.blue {
+    color: var(--accent2);
+}
+
+.stat-value.gold {
+    color: var(--gold);
+}
+
+.stat-value.purple {
+    color: var(--purple);
+}
+
+.stat-value.red {
+    color: var(--red);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── Sections ── */
+.dash-section {
+    padding: 8px 32px 24px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title .icon {
+    font-size: 22px;
+}
+
+/* ── Tables ── */
+.dash-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.dash-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-dim);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.dash-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.dash-table tr:last-child td {
+    border-bottom: none;
+}
+
+.dash-table tr:hover td {
+    background: rgba(255, 255, 255, .02);
+}
+
+.player-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-avatar {
+    font-size: 24px;
+}
+
+.player-label {
+    font-weight: 600;
+}
+
+.stars-cell {
+    color: var(--gold);
+}
+
+.coins-cell {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.level-cell {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.hint-cell {
+    font-size: 13px;
+}
+
+.time-cell {
+    color: var(--text-dim);
+}
+
+/* Status badges */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-green {
+    background: rgba(78, 203, 113, .15);
+    color: #4ecb71;
+}
+
+.badge-red {
+    background: rgba(255, 107, 107, .15);
+    color: #ff6b6b;
+}
+
+.badge-blue {
+    background: rgba(77, 150, 255, .15);
+    color: #4d96ff;
+}
+
+/* ── Loading / Empty states ── */
+.loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+    font-size: 16px;
+}
+
+.loading-state .spinner {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .dash-header {
+        padding: 20px 16px;
+    }
+
+    .stats-grid {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .dash-section {
+        padding: 8px 16px 16px;
+    }
+
+    .dash-table {
+        font-size: 12px;
+    }
+
+    .dash-table th,
+    .dash-table td {
+        padding: 8px 10px;
+    }
+}

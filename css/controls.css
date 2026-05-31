@@ -1,0 +1,796 @@
+/* ═══════════════════════════════════════════
+   controls.css — D-pad, command cards, dropzone,
+                  sequence display, run button
+   ═══════════════════════════════════════════ */
+
+/* ── Controls panel — mobile bottom strip / desktop right sidebar ── */
+#bottom {
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #141830, #0d1028);
+    display: flex;
+    flex-direction: column;
+    direction: rtl;
+    border-top: 2px solid rgba(255, 255, 255, .08);
+    box-shadow: 0 -6px 28px rgba(0, 0, 0, .5);
+}
+
+@media (min-width: 820px) {
+    #bottom {
+        width: 300px;
+        min-width: 300px;
+        border-top: none;
+        border-left: 2px solid rgba(255, 255, 255, .07);
+        box-shadow: -4px 0 24px rgba(0, 0, 0, .35);
+    }
+}
+
+/* Top zone: seq + indicators — scrollable */
+#bottom-top {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 14px 8px;
+}
+
+#bottom-top::-webkit-scrollbar {
+    width: 4px;
+}
+
+#bottom-top::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .12);
+    border-radius: 2px;
+}
+
+@media (min-width: 820px) {
+    #bottom-top {
+        gap: 12px;
+        padding: 14px 16px 8px;
+    }
+}
+
+/* Bottom zone: dpad + run — always anchored */
+#bottom-fixed {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 14px 14px;
+    border-top: 1px solid rgba(255, 255, 255, .06);
+    background: linear-gradient(180deg, rgba(10, 12, 30, 0), rgba(8, 10, 24, .6));
+}
+
+@media (min-width: 820px) {
+    #bottom-fixed {
+        gap: 12px;
+        padding: 8px 16px 18px;
+    }
+}
+
+/* ── Sequence row ── */
+#seq-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#seq-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    direction: rtl;
+}
+
+.seq-lbl {
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, .45);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    flex: 1;
+}
+
+.btn-hint {
+    background: rgba(184, 125, 255, .13);
+    border: 1px solid rgba(184, 125, 255, .28);
+    border-radius: 20px;
+    padding: 5px 13px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: #c0a0ff;
+    font-family: var(--font);
+    white-space: nowrap;
+    transition: background .12s, transform .1s;
+}
+
+.btn-hint:hover {
+    background: rgba(184, 125, 255, .24);
+    transform: scale(1.04);
+}
+
+.btn-clr {
+    background: rgba(255, 70, 70, .1);
+    border: 1px solid rgba(255, 70, 70, .2);
+    border-radius: 20px;
+    padding: 5px 13px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 120, 120, .7);
+    font-family: var(--font);
+    white-space: nowrap;
+    transition: background .12s, transform .1s;
+}
+
+.btn-clr:hover {
+    background: rgba(255, 70, 70, .2);
+    color: #ff9090;
+    transform: scale(1.04);
+}
+
+/* ── Dropzone (single merged rule) ── */
+#dropzone {
+    min-height: 60px;
+    max-height: 68px;
+    border: 2px dashed rgba(255, 255, 255, .12);
+    border-radius: 16px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    background: rgba(255, 255, 255, .03);
+    transition: border-color .18s, background .18s;
+    direction: ltr;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+#dropzone::-webkit-scrollbar {
+    display: none;
+}
+
+#dropzone.over {
+    border-color: var(--gold);
+    background: rgba(255, 217, 61, .06);
+    box-shadow: inset 0 0 0 1px rgba(255, 217, 61, .12);
+}
+
+@media (min-width: 820px) {
+    #dropzone {
+        flex: 1;
+        min-height: 80px;
+        max-height: none;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 8px 10px;
+        gap: 6px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, .12) transparent;
+    }
+}
+
+#dz-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, .2);
+    pointer-events: none;
+    direction: rtl;
+}
+
+/* ── Tile rules panel ── */
+#tile-rules {
+    display: none;
+    background: linear-gradient(135deg, rgba(30, 50, 100, .7), rgba(20, 35, 75, .8));
+    border: 1.5px solid rgba(120, 180, 255, .3);
+    border-radius: 12px;
+    padding: 8px 12px;
+    direction: rtl;
+    flex-shrink: 0;
+    gap: 8px;
+    flex-direction: column;
+}
+
+#tile-rules.visible {
+    display: flex;
+}
+
+.tile-rule-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #c8e0ff;
+}
+
+.tile-rule-icon {
+    font-size: 20px;
+}
+
+.tile-rule-arrow {
+    font-size: 16px;
+    color: rgba(200, 220, 255, .6);
+}
+
+.tile-rule-cmd {
+    background: rgba(120, 180, 255, .15);
+    border: 1px solid rgba(120, 180, 255, .3);
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 13px;
+    color: #90c8ff;
+}
+
+/* ── Collect indicator strip ── */
+#collect-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(255, 200, 40, .12), rgba(255, 160, 0, .08));
+    border: 1.5px solid rgba(255, 200, 40, .35);
+    border-radius: 12px;
+    padding: 7px 14px;
+    direction: rtl;
+    animation: collectBarPulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes collectBarPulse {
+
+    0%,
+    100% {
+        border-color: rgba(255, 200, 40, .35);
+        box-shadow: none;
+    }
+
+    50% {
+        border-color: rgba(255, 200, 40, .65);
+        box-shadow: 0 0 10px rgba(255, 200, 40, .2);
+    }
+}
+
+#collect-bar-icon {
+    font-size: 22px;
+}
+
+#collect-bar-text {
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(255, 220, 120, .9);
+    flex: 1;
+}
+
+#collect-bar.collected {
+    background: rgba(78, 203, 113, .1);
+    border-color: rgba(78, 203, 113, .4);
+    animation: none;
+}
+
+#collect-bar.collected #collect-bar-text {
+    color: rgba(100, 220, 140, .9);
+}
+
+/* ── Command row ── */
+#cmd-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    direction: ltr;
+    flex-shrink: 0;
+}
+
+/* ── D-PAD: PlayStation circular style ── */
+#dpad {
+    flex-shrink: 0;
+}
+
+#dpad-ps {
+    position: relative;
+    width: 154px;
+    height: 154px;
+}
+
+.dp-ps-mid {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .05);
+    border: 2px solid rgba(255, 255, 255, .09);
+    pointer-events: none;
+}
+
+.dp-btn {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .19);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    background: radial-gradient(circle at 38% 32%, #3a4a98, #1c2660);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, .55),
+        inset 0 1px 0 rgba(255, 255, 255, .15);
+    transition: background .08s, box-shadow .08s, transform .07s;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+.dp-btn:hover {
+    background: radial-gradient(circle at 38% 32%, #4858b8, #263082);
+    border-color: rgba(255, 255, 255, .32);
+}
+
+.dp-btn:active {
+    transform: scale(.86);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .55), 0 0 14px rgba(80, 140, 255, .4);
+    background: radial-gradient(circle at 38% 32%, #5588ff, #1e4acc);
+    border-color: #6698ff;
+}
+
+.dp-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* D-pad positions */
+.dp-ps-up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dp-ps-down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dp-ps-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.dp-ps-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Active overrides — preserve position */
+.dp-ps-up:active {
+    transform: translateX(-50%) scale(.86);
+}
+
+.dp-ps-down:active {
+    transform: translateX(-50%) scale(.86);
+}
+
+.dp-ps-left:active {
+    transform: translateY(-50%) scale(.86);
+}
+
+.dp-ps-right:active {
+    transform: translateY(-50%) scale(.86);
+}
+
+@media (min-width: 820px) {
+    #dpad-ps {
+        width: 168px;
+        height: 168px;
+    }
+
+    .dp-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .dp-ps-mid {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* ── Special commands shelf ── */
+#special-shelf {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    min-width: 80px;
+}
+
+#special-shelf:empty {
+    display: none;
+}
+
+#special-shelf::before {
+    content: attr(data-label);
+    font-size: 9px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, .28);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    white-space: nowrap;
+}
+
+/* ── Command cards ── */
+.card {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: linear-gradient(155deg, #2a3060, #1a2040);
+    border: 2px solid rgba(255, 255, 255, .13);
+    box-shadow:
+        0 4px 0 rgba(0, 0, 0, .45),
+        inset 0 1px 0 rgba(255, 255, 255, .1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: grab;
+    transition:
+        transform .14s cubic-bezier(.34, 1.56, .64, 1),
+        box-shadow .14s,
+        border-color .14s;
+    direction: rtl;
+}
+
+.card:hover {
+    transform: scale(1.1) translateY(-3px);
+    border-color: rgba(255, 217, 61, .6);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, .45), 0 0 18px rgba(255, 217, 61, .22);
+}
+
+.card:active {
+    cursor: grabbing;
+    transform: scale(.96) translateY(2px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, .45);
+}
+
+.card.drag-src {
+    opacity: .3;
+}
+
+.card .ce {
+    font-size: 25px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .4));
+}
+
+@media (min-width: 800px) {
+    .card {
+        width: 70px;
+        height: 70px;
+    }
+
+    .card .ce {
+        font-size: 28px;
+    }
+}
+
+/* Loop card variant */
+.card.loop-card {
+    background: linear-gradient(160deg, #3d1d66, #261048);
+    border-color: rgba(184, 125, 255, .5);
+    box-shadow:
+        0 4px 0 rgba(0, 0, 0, .45),
+        0 6px 16px rgba(0, 0, 0, .25),
+        inset 0 1px 0 rgba(184, 125, 255, .2);
+}
+
+.card.loop-card:hover {
+    border-color: #b87dff;
+    box-shadow:
+        0 6px 0 rgba(0, 0, 0, .45),
+        0 0 20px rgba(184, 125, 255, .35),
+        inset 0 1px 0 rgba(184, 125, 255, .25);
+}
+
+/* IF card variant */
+.card.if-card {
+    background: radial-gradient(circle at 38% 32%, #5a4a00, #2e2400);
+    border-color: rgba(255, 210, 60, .4);
+}
+
+.card.if-card:hover {
+    background: radial-gradient(circle at 38% 32%, #7a6a10, #4a3a00);
+    border-color: rgba(255, 210, 60, .7);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .5), 0 0 18px rgba(255, 210, 60, .25);
+}
+
+/* Func card variant */
+.card.func-card {
+    background: linear-gradient(135deg, #2a1a1a, #3a1010);
+    border-color: rgba(255, 100, 100, .4);
+}
+
+.card.func-card:hover {
+    border-color: #ff6464;
+    box-shadow: 0 0 18px rgba(255, 100, 100, .3);
+}
+
+/* ── Sequence cards in dropzone ── */
+.dcard {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #247840, #165a2c);
+    border: 2px solid rgba(78, 203, 113, .45);
+    box-shadow:
+        0 3px 0 rgba(0, 0, 0, .35),
+        0 4px 12px rgba(0, 0, 0, .2),
+        inset 0 1px 0 rgba(255, 255, 255, .1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #e8ffe0;
+    cursor: pointer;
+    position: relative;
+    animation: dcIn .22s cubic-bezier(.36, 1.56, .64, 1);
+    direction: rtl;
+    transition: transform .1s, box-shadow .1s;
+}
+
+@keyframes dcIn {
+    from {
+        transform: scale(0) rotate(-15deg);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+}
+
+.dcard .de {
+    font-size: 23px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .4));
+}
+
+.dcard:hover {
+    transform: translateY(-1px);
+}
+
+/* Delete button on sequence cards */
+.dcard .dx {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .35;
+    transition: opacity .14s;
+}
+
+.dcard:hover .dx {
+    opacity: 1;
+}
+
+/* Executing card highlight */
+.dcard.exec {
+    border-color: var(--gold);
+    background: linear-gradient(145deg, #a07000, #6e4a00);
+    box-shadow:
+        0 3px 0 rgba(0, 0, 0, .35),
+        0 0 18px rgba(255, 217, 61, .55),
+        0 0 6px rgba(255, 217, 61, .8);
+    transform: scale(1.08) translateY(-2px);
+    color: #fff;
+}
+
+/* IF-type sequence card */
+.dcard.if-dcard {
+    background: linear-gradient(145deg, #3a3000, #252000);
+    border-color: rgba(255, 210, 60, .4);
+    color: #ffe080;
+}
+
+.dcard.if-dcard .de {
+    filter: drop-shadow(0 0 5px rgba(255, 210, 60, .7));
+}
+
+/* ── Loop wrapper in sequence ── */
+.loop-wrap {
+    flex-shrink: 0;
+    border: 2px solid rgba(184, 125, 255, .5);
+    border-radius: 14px;
+    padding: 5px 8px;
+    background: linear-gradient(135deg, rgba(60, 20, 80, .7), rgba(40, 15, 60, .8));
+    box-shadow:
+        0 3px 0 rgba(0, 0, 0, .35),
+        0 4px 12px rgba(0, 0, 0, .2),
+        inset 0 1px 0 rgba(184, 125, 255, .15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: dcIn .22s cubic-bezier(.36, 1.56, .64, 1);
+    position: relative;
+}
+
+.loop-label {
+    font-size: 11px;
+    font-weight: 900;
+    color: #d3aaff;
+    white-space: nowrap;
+    padding: 0 2px;
+}
+
+.loop-dx {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .35;
+    transition: opacity .14s;
+    cursor: pointer;
+}
+
+.loop-wrap:hover .loop-dx {
+    opacity: 1;
+}
+
+.loop-wrap.exec {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(255, 217, 61, .35);
+}
+
+.loop-wrap.loop-open {
+    border-color: #b87dff;
+    background: rgba(184, 125, 255, .14);
+    box-shadow: 0 0 16px rgba(184, 125, 255, .25);
+}
+
+.loop-body-card {
+    width: 46px !important;
+    height: 46px !important;
+    border-color: rgba(184, 125, 255, .5) !important;
+    background: linear-gradient(135deg, #2a1a4e, #1a1030) !important;
+}
+
+/* ── IF wrapper in sequence ── */
+.if-wrap {
+    flex-shrink: 0;
+    border: 2px solid rgba(77, 150, 255, .5);
+    border-radius: 14px;
+    padding: 5px 7px;
+    background: rgba(77, 150, 255, .08);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: dcIn .2s cubic-bezier(.36, 1.5, .64, 1);
+    position: relative;
+}
+
+.if-label {
+    font-size: 11px;
+    font-weight: 900;
+    color: #7ab8ff;
+    white-space: nowrap;
+    padding: 0 2px;
+}
+
+.if-wrap .loop-dx {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+}
+
+/* ── Func wrapper in sequence ── */
+.func-wrap {
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 100, 100, .5);
+    border-radius: 14px;
+    padding: 5px 7px;
+    background: rgba(255, 100, 100, .08);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: dcIn .2s cubic-bezier(.36, 1.5, .64, 1);
+    position: relative;
+}
+
+.func-label {
+    font-size: 11px;
+    font-weight: 900;
+    color: #ff9090;
+    white-space: nowrap;
+    padding: 0 2px;
+}
+
+/* ── Run button ── */
+.btn-run {
+    width: 100%;
+    background: linear-gradient(155deg, #55dc78, #22a842);
+    color: #031810;
+    font-family: var(--font);
+    font-size: 18px;
+    font-weight: 900;
+    border: none;
+    border-radius: 16px;
+    padding: 13px 0;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #115e28, 0 8px 22px rgba(50, 170, 80, .32);
+    letter-spacing: .3px;
+    transition:
+        transform .12s cubic-bezier(.34, 1.56, .64, 1),
+        box-shadow .12s;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    margin-top: auto;
+}
+
+.btn-run:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #115e28, 0 14px 30px rgba(50, 170, 80, .4);
+}
+
+.btn-run:active {
+    transform: translateY(4px) scale(.98);
+    box-shadow: 0 1px 0 #115e28;
+}
+
+.btn-run:disabled {
+    background: rgba(255, 255, 255, .09);
+    color: rgba(255, 255, 255, .2);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+@media (min-width: 800px) {
+    .btn-run {
+        font-size: 20px;
+        padding: 15px 0;
+        border-radius: 18px;
+    }
+}

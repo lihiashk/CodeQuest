@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════
+   grid.css — Map area, cells, hero, speech bubble, hints
+   ═══════════════════════════════════════════ */
+
+/* ── Game area: map + controls ── */
+#game-area {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+@media (min-width: 820px) {
+    #game-area {
+        flex-direction: row;
+    }
+}
+
+/* ── Map wrapper ── */
+#map-wrap {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #1c3a5c 0%, #2a5e2e 55%, #1d4a20 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    direction: ltr;
+}
+
+#map-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(8, 10, 24, .5) 100%);
+}
+
+/* Grid container — hero is absolute child */
+#grid {
+    position: relative;
+    direction: ltr;
+}
+
+/* Grid rows — LTR so col 0 is leftmost */
+.grow {
+    display: flex;
+    direction: ltr;
+}
+
+/* Cell base */
+.cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, .2);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* Cell types */
+.cell.grass {
+    background: var(--cell-grass, linear-gradient(180deg, #52b040, #3d8a2c));
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .2);
+}
+
+.cell.path {
+    background: var(--cell-path, linear-gradient(180deg, #d4b57a, #b0935e));
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .2);
+}
+
+.cell.wall {
+    background: var(--cell-wall, linear-gradient(180deg, #707080, #484858));
+    box-shadow:
+        inset 0 -4px 0 rgba(0, 0, 0, .5),
+        inset 0 1px 0 rgba(255, 255, 255, .12);
+}
+
+.cell.goal {
+    background: linear-gradient(180deg, #ffe84d, #ffaa00);
+    animation: goalPulse 1.4s ease-in-out infinite;
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .2);
+}
+
+/* Per-world cell themes — set on #map-wrap via JS */
+#map-wrap.world-forest {
+    --cell-grass: linear-gradient(180deg, #58c044, #3d8a2c);
+    --cell-path: linear-gradient(180deg, #d4b57a, #b0935e);
+    --cell-wall: linear-gradient(180deg, #6a7060, #484840);
+}
+
+#map-wrap.world-mountain {
+    --cell-grass: linear-gradient(180deg, #8090a0, #606878);
+    --cell-path: linear-gradient(180deg, #c0b098, #a09080);
+    --cell-wall: linear-gradient(180deg, #505060, #383848);
+}
+
+#map-wrap.world-castle {
+    --cell-grass: linear-gradient(180deg, #445088, #2a3060);
+    --cell-path: linear-gradient(180deg, #a898c8, #887898);
+    --cell-wall: linear-gradient(180deg, #585870, #383848);
+}
+
+#map-wrap.world-volcano {
+    --cell-grass: linear-gradient(180deg, #8a3010, #602008);
+    --cell-path: linear-gradient(180deg, #c87848, #906030);
+    --cell-wall: linear-gradient(180deg, #484038, #302820);
+}
+
+#map-wrap.world-space {
+    --cell-grass: linear-gradient(180deg, #101840, #080e28);
+    --cell-path: linear-gradient(180deg, #304060, #203050);
+    --cell-wall: linear-gradient(180deg, #202840, #141c30);
+}
+
+@keyframes goalPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 217, 61, .9), inset 0 -3px 0 rgba(0, 0, 0, .2);
+    }
+
+    60% {
+        box-shadow: 0 0 0 10px rgba(255, 217, 61, 0), inset 0 -3px 0 rgba(0, 0, 0, .2);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 217, 61, .9), inset 0 -3px 0 rgba(0, 0, 0, .2);
+    }
+}
+
+/* Decoration emoji inside cells */
+.cdeco {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* ── Trigger tile cells ── */
+.cell.has-tile {
+    box-shadow:
+        inset 0 0 0 3px rgba(120, 200, 255, .55),
+        0 0 0 1px rgba(120, 200, 255, .3),
+        0 0 14px rgba(120, 200, 255, .25) !important;
+}
+
+.tile-icon {
+    animation: tileBounce 1.3s ease-in-out infinite;
+    filter: drop-shadow(0 0 7px rgba(120, 200, 255, .8));
+    z-index: 7;
+}
+
+@keyframes tileBounce {
+
+    0%,
+    100% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(1.18) translateY(-3px);
+    }
+}
+
+.tile-icon.used {
+    opacity: 0;
+    transition: opacity .25s;
+}
+
+/* ── Collectible items ── */
+#coll {
+    animation: collectBounce 1.1s ease-in-out infinite;
+    filter:
+        drop-shadow(0 0 8px rgba(255, 217, 61, .9)) drop-shadow(0 0 16px rgba(255, 217, 61, .5));
+    z-index: 8;
+}
+
+@keyframes collectBounce {
+
+    0%,
+    100% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(1.2) translateY(-4px);
+    }
+}
+
+.cell.has-collect {
+    box-shadow:
+        inset 0 0 0 3px rgba(255, 217, 61, .7),
+        0 0 0 2px rgba(255, 217, 61, .4),
+        0 0 16px rgba(255, 217, 61, .35) !important;
+    z-index: 2;
+}
+
+.collect-arrow {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: arrowBounce .8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 12;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .5));
+}
+
+@keyframes arrowBounce {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-4px);
+    }
+}
+
+/* ── Hero ── */
+#hero {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hface {
+    line-height: 1;
+}
+
+@keyframes hbounce {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+
+    40% {
+        transform: translateY(-18px) scale(1.1, .9);
+    }
+
+    70% {
+        transform: translateY(-4px) scale(.95, 1.05);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes hshake {
+
+    0%,
+    100% {
+        transform: rotate(0) scale(1);
+    }
+
+    20% {
+        transform: rotate(-16deg) scale(1.05);
+    }
+
+    40% {
+        transform: rotate(14deg) scale(1.05);
+    }
+
+    60% {
+        transform: rotate(-10deg);
+    }
+
+    80% {
+        transform: rotate(8deg);
+    }
+}
+
+@keyframes hcheer {
+    0% {
+        transform: scale(1) rotate(0);
+    }
+
+    25% {
+        transform: scale(1.4) rotate(-12deg);
+    }
+
+    50% {
+        transform: scale(1.5) rotate(10deg);
+    }
+
+    75% {
+        transform: scale(1.3) rotate(-6deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0);
+    }
+}
+
+/* ── Speech bubble — fixed so never clipped ── */
+#bubble {
+    position: fixed;
+    z-index: 200;
+    background: #fff;
+    color: #1a1a2e;
+    border-radius: 16px;
+    padding: 9px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, .15), 0 6px 20px rgba(0, 0, 0, .3);
+    pointer-events: none;
+    transition: opacity .2s, transform .2s cubic-bezier(.34, 1.56, .64, 1);
+    direction: rtl;
+    transform-origin: bottom center;
+}
+
+#bubble:not(.off) {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+#bubble.off {
+    opacity: 0;
+    transform: translateY(6px) scale(.92);
+}
+
+#bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid #fff;
+}
+
+/* ── Hint toast ── */
+#hint-toast {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(55, 18, 85, .95), rgba(38, 12, 65, .97));
+    border: 1.5px solid rgba(184, 125, 255, .45);
+    border-radius: 16px;
+    padding: 12px 22px;
+    color: #e0c8ff;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 15;
+    max-width: 93%;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .5), 0 0 24px rgba(184, 125, 255, .18);
+    transition: opacity .3s, transform .3s cubic-bezier(.34, 1.56, .64, 1);
+    direction: rtl;
+    white-space: normal;
+    line-height: 1.5;
+}
+
+#hint-toast:not(.off) {
+    transform: translateX(-50%) translateY(0);
+}
+
+#hint-toast.off {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(6px);
+}

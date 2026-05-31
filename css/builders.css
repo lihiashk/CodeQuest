@@ -1,0 +1,186 @@
+/* ═══════════════════════════════════════════
+   builders.css — Loop, function, and IF builder
+                  overlay styles
+   ═══════════════════════════════════════════ */
+
+/* ── Builder D-pad: same PlayStation cross layout as main game ── */
+.builder-dpad-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.builder-dpad {
+    position: relative;
+    width: 154px;
+    height: 154px;
+}
+
+/* Builder buttons reuse the .dp-btn base from controls.css.
+   We only need positioning — the visual style is inherited. */
+.builder-dpad .dp-btn {
+    position: absolute;
+}
+
+.builder-dpad .dp-ps-up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.builder-dpad .dp-ps-down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.builder-dpad .dp-ps-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.builder-dpad .dp-ps-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.builder-dpad .dp-ps-up:active {
+    transform: translateX(-50%) scale(.86);
+}
+
+.builder-dpad .dp-ps-down:active {
+    transform: translateX(-50%) scale(.86);
+}
+
+.builder-dpad .dp-ps-left:active {
+    transform: translateY(-50%) scale(.86);
+}
+
+.builder-dpad .dp-ps-right:active {
+    transform: translateY(-50%) scale(.86);
+}
+
+.builder-dpad .dp-ps-mid {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .05);
+    border: 2px solid rgba(255, 255, 255, .09);
+    pointer-events: none;
+}
+
+/* ── Loop count buttons ── */
+.loop-count-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #323a88, #1c2260);
+    border: 2px solid rgba(255, 255, 255, .18);
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, .5),
+        inset 0 1px 0 rgba(255, 255, 255, .13);
+    color: #eef2ff;
+    font-family: var(--font);
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background .12s, transform .1s, box-shadow .1s;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loop-count-btn.hov {
+    background: radial-gradient(circle at 38% 32%, #7060e8, #4030a8);
+    border-color: rgba(184, 125, 255, .6);
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, .5),
+        0 0 14px rgba(184, 125, 255, .35);
+    transform: scale(1.12);
+    color: #fff;
+}
+
+/* ── Direction buttons (kept for step 3 / advanced builder) ── */
+.loop-dir-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .19);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: radial-gradient(circle at 38% 32%, #3a4a98, #1c2660);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, .55),
+        inset 0 1px 0 rgba(255, 255, 255, .15);
+    transition: background .08s, box-shadow .08s, transform .07s;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    color: #eef2ff;
+    font-family: var(--font);
+}
+
+.loop-dir-btn .ldb-arrow {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.loop-dir-btn .ldb-label {
+    font-size: 10px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, .8);
+    line-height: 1;
+}
+
+.loop-dir-btn.hov {
+    background: radial-gradient(circle at 38% 32%, #4858b8, #263082);
+    border-color: rgba(255, 255, 255, .38);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, .55),
+        0 0 14px rgba(100, 140, 255, .35);
+    transform: scale(1.1);
+}
+
+.loop-dir-btn:active {
+    transform: scale(.88);
+    background: radial-gradient(circle at 38% 32%, #5588ff, #1e4acc);
+}
+
+/* Card pulse animation (featured concept for current world) */
+@keyframes cardPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .55), 0 0 0 0 rgba(184, 125, 255, .5);
+    }
+
+    50% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .55), 0 0 0 7px rgba(184, 125, 255, 0);
+    }
+}
+
+.card-pulse {
+    animation: cardPulse 1.8s ease-in-out infinite;
+}
+
+/* Overlay fade-in (replaces the old wpop bounce on box content) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

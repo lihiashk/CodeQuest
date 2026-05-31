@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסע הקוד — לוח בקרה</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="dash-header">
+        <div>
+            <div class="dash-title">📊 לוח בקרה — מסע הקוד</div>
+            <div class="dash-subtitle">מעקב אחרי התלמידים בזמן אמת</div>
+        </div>
+        <button class="dash-refresh" id="btn-refresh">🔄 רענון</button>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value" id="stat-players">—</div>
+            <div class="stat-label">שחקנים</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value blue" id="stat-avg-level">—</div>
+            <div class="stat-label">שלב ממוצע</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value gold" id="stat-total-stars">—</div>
+            <div class="stat-label">כוכבים סה״כ</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🪙</div>
+            <div class="stat-value gold" id="stat-total-coins">—</div>
+            <div class="stat-label">מטבעות סה״כ</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🧱</div>
+            <div class="stat-value red" id="stat-hardest">—</div>
+            <div class="stat-label">שלב הכי קשה</div>
+        </div>
+    </div>
+
+    <!-- Players Table -->
+    <div class="dash-section">
+        <div class="section-title"><span class="icon">👤</span> שחקנים</div>
+        <div class="dash-table-wrap">
+            <table class="dash-table" id="players-table">
+                <thead>
+                    <tr>
+                        <th>שחקן</th>
+                        <th>שלב נוכחי</th>
+                        <th>⭐ כוכבים</th>
+                        <th>🪙 מטבעות</th>
+                        <th>נראה לאחרונה</th>
+                    </tr>
+                </thead>
+                <tbody id="players-tbody">
+                    <tr>
+                        <td colspan="5" class="loading-state">
+                            <div class="spinner"></div><br>טוען נתונים...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Level Analytics Table -->
+    <div class="dash-section">
+        <div class="section-title"><span class="icon">🗺️</span> ניתוח שלבים</div>
+        <div class="dash-table-wrap">
+            <table class="dash-table" id="levels-table">
+                <thead>
+                    <tr>
+                        <th>שלב</th>
+                        <th>עולם</th>
+                        <th>אחוז הצלחה</th>
+                        <th>ניסיונות ממוצע</th>
+                        <th>שימוש ברמז</th>
+                        <th>כוכבים ממוצע</th>
+                    </tr>
+                </thead>
+                <tbody id="levels-tbody">
+                    <tr>
+                        <td colspan="6" class="loading-state">
+                            <div class="spinner"></div><br>טוען נתונים...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Player Detail (hidden until click) -->
+    <div class="dash-section" id="player-detail-section" style="display:none">
+        <div class="section-title"><span class="icon">🔍</span> פירוט שחקן: <span id="detail-player-name"></span></div>
+        <div class="dash-table-wrap">
+            <table class="dash-table" id="detail-table">
+                <thead>
+                    <tr>
+                        <th>שלב</th>
+                        <th>⭐</th>
+                        <th>ניסיונות</th>
+                        <th>צעדים הכי טוב</th>
+                        <th>זמן (שניות)</th>
+                        <th>רמז</th>
+                    </tr>
+                </thead>
+                <tbody id="detail-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Events -->
+    <div class="dash-section">
+        <div class="section-title"><span class="icon">📋</span> אירועים אחרונים</div>
+        <div class="dash-table-wrap">
+            <table class="dash-table" id="events-table">
+                <thead>
+                    <tr>
+                        <th>זמן</th>
+                        <th>שחקן</th>
+                        <th>אירוע</th>
+                        <th>שלב</th>
+                        <th>פרטים</th>
+                    </tr>
+                </thead>
+                <tbody id="events-tbody">
+                    <tr>
+                        <td colspan="5" class="loading-state">
+                            <div class="spinner"></div><br>טוען נתונים...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        /* ════════════════════════════════════════════
+           Admin Dashboard Logic
+        ════════════════════════════════════════════ */
+
+        /** Level metadata for display (imported from game config) */
+        const LEVEL_WORLDS = {
+            1: '🌲 יער הקסם', 2: '🌲 יער הקסם', 3: '🌲 יער הקסם', 4: '🌲 יער הקסם', 5: '🌲 יער הקסם',
+            6: '⛰️ הר הלולאות', 7: '⛰️ הר הלולאות', 8: '⛰️ הר הלולאות', 9: '⛰️ הר הלולאות', 10: '⛰️ הר הלולאות',
+            11: '🏰 מבצר הקסמים', 12: '🏰 מבצר הקסמים', 13: '🏰 מבצר הקסמים', 14: '🏰 מבצר הקסמים', 15: '🏰 מבצר הקסמים',
+            16: '🌋 הר הגעש', 17: '🌋 הר הגעש', 18: '🌋 הר הגעש', 19: '🌋 הר הגעש', 20: '🌋 הר הגעש', 21: '🌋 הר הגעש',
+            22: '🚀 חלל הקוד', 23: '🚀 חלל הקוד', 24: '🚀 חלל הקוד', 25: '🚀 חלל הקוד', 26: '🚀 חלל הקוד', 27: '🚀 חלל הקוד',
+        };
+
+        const EVENT_LABELS = {
+            'level_start': '🟢 התחלת שלב',
+            'level_complete': '🏆 השלמת שלב',
+            'level_fail': '❌ נכשל',
+            'hint_used': '💡 רמז',
+            'session_start': '🔵 התחברות',
+            'session_end': '🔴 ניתוק',
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initFirebase();
+            if (!firebaseReady) {
+                document.querySelector('.stats-grid').innerHTML =
+                    '<div class="empty-state" style="grid-column:1/-1">⚠️ Firebase לא מוגדר — עדכנו את firebase-config.js</div>';
+                return;
+            }
+            loadDashboard();
+            document.getElementById('btn-refresh').addEventListener('click', loadDashboard);
+        });
+
+        async function loadDashboard() {
+            try {
+                await Promise.all([
+                    loadOverview(),
+                    loadPlayersTable(),
+                    loadLevelAnalytics(),
+                    loadRecentEvents(),
+                ]);
+            } catch (err) {
+                console.error('Dashboard load error:', err);
+            }
+        }
+
+        /* ── Overview Stats ── */
+        async function loadOverview() {
+            const snap = await db.collection('players').get();
+            const players = snap.docs.map(d => d.data());
+            const count = players.length;
+
+            if (count === 0) {
+                document.getElementById('stat-players').textContent = '0';
+                return;
+            }
+
+            const avgLv = (players.reduce((s, p) => s + (p.currentLevel || 1), 0) / count).toFixed(1);
+            const totalStars = players.reduce((s, p) => s + (p.totalStars || 0), 0);
+            const totalCoins = players.reduce((s, p) => s + (p.totalCoins || 0), 0);
+
+            document.getElementById('stat-players').textContent = count;
+            document.getElementById('stat-avg-level').textContent = avgLv;
+            document.getElementById('stat-total-stars').textContent = totalStars;
+            document.getElementById('stat-total-coins').textContent = totalCoins.toLocaleString();
+
+            // Find hardest level (most avg attempts)
+            await findHardestLevel();
+        }
+
+        async function findHardestLevel() {
+            const playersSnap = await db.collection('players').get();
+            const levelAttempts = {}; // levelId -> [attempts]
+
+            for (const pDoc of playersSnap.docs) {
+                const levelsSnap = await pDoc.ref.collection('levels').get();
+                levelsSnap.docs.forEach(lDoc => {
+                    const d = lDoc.data();
+                    const id = lDoc.id;
+                    if (!levelAttempts[id]) levelAttempts[id] = [];
+                    levelAttempts[id].push(d.attempts || 1);
+                });
+            }
+
+            let hardest = '—';
+            let maxAvg = 0;
+            for (const [id, arr] of Object.entries(levelAttempts)) {
+                const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+                if (avg > maxAvg) { maxAvg = avg; hardest = `שלב ${id}`; }
+            }
+            document.getElementById('stat-hardest').textContent = hardest;
+        }
+
+        /* ── Players Table ── */
+        async function loadPlayersTable() {
+            const snap = await db.collection('players').orderBy('lastSeen', 'desc').get();
+            const tbody = document.getElementById('players-tbody');
+
+            if (snap.empty) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">אין שחקנים עדיין</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            snap.docs.forEach(doc => {
+                const p = doc.data();
+                const id = doc.id;
+                const lastSeen = p.lastSeen ? formatTime(p.lastSeen.toDate()) : '—';
+                const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                tr.addEventListener('click', () => showPlayerDetail(id, p.name, p.avatar));
+                tr.innerHTML = `
+                <td><div class="player-name"><span class="player-avatar">${p.avatar || '🧙‍♂️'}</span><span class="player-label">${p.name || '—'}</span></div></td>
+                <td class="level-cell">${p.currentLevel || 1}</td>
+                <td class="stars-cell">${'⭐'.repeat(Math.min(p.totalStars || 0, 5))} ${p.totalStars || 0}</td>
+                <td class="coins-cell">${(p.totalCoins || 0).toLocaleString()}</td>
+                <td class="time-cell">${lastSeen}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ── Level Analytics ── */
+        async function loadLevelAnalytics() {
+            const playersSnap = await db.collection('players').get();
+            const levelData = {}; // levelId -> { completed, attempts[], stars[], hintUsed }
+
+            for (const pDoc of playersSnap.docs) {
+                const levelsSnap = await pDoc.ref.collection('levels').get();
+                levelsSnap.docs.forEach(lDoc => {
+                    const d = lDoc.data();
+                    const id = lDoc.id;
+                    if (!levelData[id]) levelData[id] = { completed: 0, total: 0, attempts: [], stars: [], hints: 0 };
+                    levelData[id].total++;
+                    if (d.completed) levelData[id].completed++;
+                    levelData[id].attempts.push(d.attempts || 1);
+                    levelData[id].stars.push(d.stars || 0);
+                    if (d.hintUsed) levelData[id].hints++;
+                });
+            }
+
+            const tbody = document.getElementById('levels-tbody');
+            const sortedIds = Object.keys(levelData).sort((a, b) => Number(a) - Number(b));
+
+            if (sortedIds.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">אין נתונים עדיין</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            sortedIds.forEach(id => {
+                const d = levelData[id];
+                const completionRate = d.total > 0 ? Math.round(d.completed / d.total * 100) : 0;
+                const avgAttempts = (d.attempts.reduce((a, b) => a + b, 0) / d.attempts.length).toFixed(1);
+                const avgStars = (d.stars.reduce((a, b) => a + b, 0) / d.stars.length).toFixed(1);
+                const hintRate = d.total > 0 ? Math.round(d.hints / d.total * 100) : 0;
+
+                const rateClass = completionRate >= 80 ? 'badge-green' : completionRate >= 50 ? 'badge-blue' : 'badge-red';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td class="level-cell">${id}</td>
+                <td>${LEVEL_WORLDS[id] || '—'}</td>
+                <td><span class="badge ${rateClass}">${completionRate}%</span></td>
+                <td>${avgAttempts}</td>
+                <td class="hint-cell">${hintRate}%</td>
+                <td class="stars-cell">${avgStars} ⭐</td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ── Player Detail ── */
+        async function showPlayerDetail(playerId, name, avatar) {
+            const section = document.getElementById('player-detail-section');
+            section.style.display = '';
+            document.getElementById('detail-player-name').textContent = `${avatar || ''} ${name}`;
+
+            const snap = await db.collection('players').doc(playerId).collection('levels')
+                .orderBy(firebase.firestore.FieldPath.documentId()).get();
+
+            const tbody = document.getElementById('detail-tbody');
+            if (snap.empty) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">אין נתוני שלבים</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            snap.docs.forEach(doc => {
+                const d = doc.data();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td class="level-cell">${doc.id}</td>
+                <td class="stars-cell">${'⭐'.repeat(d.stars || 0)}</td>
+                <td>${d.attempts || 1}</td>
+                <td>${d.bestMoves || '—'}</td>
+                <td class="time-cell">${d.totalTime || 0}</td>
+                <td class="hint-cell">${d.hintUsed ? '💡 כן' : '—'}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* ── Recent Events ── */
+        async function loadRecentEvents() {
+            const snap = await db.collection('events')
+                .orderBy('timestamp', 'desc').limit(30).get();
+
+            const tbody = document.getElementById('events-tbody');
+            if (snap.empty) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">אין אירועים עדיין</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            snap.docs.forEach(doc => {
+                const e = doc.data();
+                const time = e.timestamp ? formatTime(e.timestamp.toDate()) : '—';
+                const label = EVENT_LABELS[e.type] || e.type;
+                const meta = e.meta || {};
+                let details = '';
+                if (meta.stars) details += `⭐${meta.stars} `;
+                if (meta.moves) details += `${meta.moves} צעדים `;
+                if (meta.reason === 'wall') details += '🧱 קיר';
+                if (meta.reason === 'missed_collect') details += '🔑 לא אסף';
+                if (meta.timeSec) details += `⏱️${meta.timeSec}s `;
+                if (meta.durationSec) details += `⏱️${meta.durationSec}s `;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td class="time-cell">${time}</td>
+                <td>${e.playerName || '—'}</td>
+                <td>${label}</td>
+                <td class="level-cell">${e.levelId || '—'}</td>
+                <td>${details || '—'}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ── Helpers ── */
+        function formatTime(date) {
+            if (!date) return '—';
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 60000) return 'עכשיו';
+            if (diff < 3600000) return `לפני ${Math.floor(diff / 60000)} דקות`;
+            if (diff < 86400000) return `לפני ${Math.floor(diff / 3600000)} שעות`;
+            return date.toLocaleDateString('he-IL') + ' ' + date.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
+</body>
+
+</html>
